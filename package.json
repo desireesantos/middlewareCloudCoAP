@@ -1,8 +1,7 @@
 {
-  "name": "y",
+  "name": "coapclient",
   "version": "1.0.0",
-  "description": "CoAP applicantion to create and consume data from resources",
-  "main": "serverCloud.js",
+  "description": "CoAP applicantion to create topic and consume data from CoAP resources",
   "scripts": {
     "start": "node ./initClient.js"
   },
