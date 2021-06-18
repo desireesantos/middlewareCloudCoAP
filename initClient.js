@@ -1,4 +1,4 @@
-const { consumeDataFromTopic } = require("./src/consumeData");
+const { consumeDataFromTopic } = require("./src/client/consumeData");
 const { createCoaPTopics } = require("./src/createTopic");
 
 createCoaPTopics();
