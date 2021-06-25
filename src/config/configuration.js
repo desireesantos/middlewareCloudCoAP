@@ -17,6 +17,10 @@ var fogToCloud = {
 
 var cloudToFog = Object.assign(requestOptions, {
   pathname: `/${build_COAP_Topics[1]}`,
+  host: "localhost",
+  port: 5683,
+  method: "put",
+  observe: false,
 });
 
 module.exports = {
