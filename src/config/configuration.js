@@ -10,13 +10,13 @@ var requestOptions = {
 var fogToCloud = {
   hostname: "localhost",
   port: 5683,
-  pathname: "/middlewareToCloud",
+  pathname: "middlewareToCloud",
   method: "get",
   observe: true,
 };
 
 var cloudToFog = Object.assign(requestOptions, {
-  pathname: `/${build_COAP_Topics[1]}`,
+  pathname: "middlewareToFog",
   host: "localhost",
   port: 5683,
   method: "put",
