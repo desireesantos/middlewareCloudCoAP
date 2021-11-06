@@ -5,7 +5,7 @@ exports.consumeDataFromTopic = function () {
   cloud = coap.request(fogToCloud);
   cloud.on("response", function (cloud) {
     cloud.on("data", function (data) {
-      console.log("Message from Fog device:", data.message.toString());
+      console.log("Message from Fog device:", data);
 
       sendToFog(buildPayload(data));
     });
