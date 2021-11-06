@@ -13,6 +13,9 @@ var fogToCloud = {
   pathname: "middlewareToCloud",
   method: "get",
   observe: true,
+  options: {
+    Accept: 'application/json'
+  }
 };
 
 var cloudToFog = Object.assign(requestOptions, {
@@ -21,6 +24,9 @@ var cloudToFog = Object.assign(requestOptions, {
   port: 5683,
   method: "put",
   observe: false,
+  options: {
+    Accept: 'application/json'
+  }
 });
 
 module.exports = {

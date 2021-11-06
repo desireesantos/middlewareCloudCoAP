@@ -5,9 +5,9 @@ exports.consumeDataFromTopic = function () {
   cloud = coap.request(fogToCloud);
   cloud.on("response", function (cloud) {
     cloud.on("data", function (data) {
-      console.log("Message from Fog device:", data);
+      payload = Buffer.from(data).toString();
+      sendToFog( buildPayload(payload) );
 
-      sendToFog(buildPayload(data));
     });
 
     cloud.on("end", function () {
@@ -19,13 +19,18 @@ exports.consumeDataFromTopic = function () {
 
 function sendToFog(data) {
   fog = coap.request(cloudToFog);
-  fog.write(buildPayload(data));
+
+  console.log("Send to Fog -->", data);
+  
+  fog.write(data);
   fog.end();
 }
 
 function buildPayload(data) {
-  return {
-    message: Buffer.from(data.message).toString(),
-    date: data.date.concat(`, ${new Date().toISOString()}`)
+  const json = JSON.parse(data)
+  const payload = {
+    'message': json.message ? Buffer.from(json.message).toString(): Buffer.from(data).toString(),
+    'date': json.date ? json.date.concat(`, ${new Date().toISOString()}`) : new Date().toISOString()
   }
+  return JSON.stringify(payload);
 }
