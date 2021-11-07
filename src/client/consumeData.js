@@ -21,7 +21,7 @@ function sendToFog(data) {
   fog = coap.request(cloudToFog);
 
   console.log("Send to Fog -->", data);
-  
+
   fog.write(data);
   fog.end();
 }
