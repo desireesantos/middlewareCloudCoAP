@@ -8,6 +8,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "coap": "^0.24.0"
+    "coap": "^1.0.2",
+    "node-coap-client": "^2.0.2"
   }
 }

@@ -1,29 +1,39 @@
 const coap = require("coap");
+const coapClient = require("node-coap-client").CoapClient;
 const { fogToCloud, cloudToFog } = require("../config/configuration");
+const RESOURCE_URL = 'coap://54.94.174.102:5683/middlewareToCloud';
 
 exports.consumeDataFromTopic = function () {
-  cloud = coap.request(fogToCloud);
-  cloud.on("response", function (cloud) {
-    cloud.on("data", function (data) {
-      payload = Buffer.from(data).toString();
-      sendToFog( buildPayload(payload) );
-
-    });
-
-    cloud.on("end", function () {
-      console.log("Success");
-    });
-  });
-  cloud.end();
+  coapClient.observe(
+    RESOURCE_URL,  
+    'get',
+    (res) => {
+      hasPayloadError(res) ? getValue() : sendToFog(Buffer.from(res.payload).toString('utf-8'))
+    }
+  )
+  .then(() => { console.log("SUCESS")})
+  .catch(err => { console.error("Subscribe Call Error - Observer", err)});
 };
 
+const hasPayloadError = (res) => {return res.code?.major >= 4 && res.code?.minor == 0 }
+
 function sendToFog(data) {
-  fog = coap.request(cloudToFog);
+  
+  var req = coap.request(cloudToFog);
+  req.setOption('Block1', Buffer.alloc(0x6))
 
-  console.log("Send to Fog -->", data);
+  const builPayload = buildPayload(JSON.stringify(data))
+  req.write(builPayload);
 
-  fog.write(data);
-  fog.end();
+  req.on("response", function (res) {
+    res.on("data", function (data) {
+      console.log("CoaP publish ", data);
+    });
+    res.on("end", function () {
+      console.log("Finish Coap Publish");
+    });
+  });
+  req.end();
 }
 
 function buildPayload(data) {
@@ -33,4 +43,17 @@ function buildPayload(data) {
     'date': json.date ? json.date.concat(`, ${new Date().toISOString()}`) : new Date().toISOString()
   }
   return JSON.stringify(payload);
+}
+
+async function getValue() {
+  coap
+     .request(
+      RESOURCE_URL,
+      'get',
+     )
+     .then(response => {
+      sendToFog(Buffer.from(response.payload).toString())
+     })
+     .catch(err => { console.error("Subscribe Call Error - GET", err)})
+     ;
 }
