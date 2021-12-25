@@ -15,15 +15,17 @@ exports.consumeDataFromTopic = function () {
   .catch(err => { console.error("Subscribe Call Error - Observer", err)});
 };
 
-const hasPayloadError = (res) => {return res.code?.major >= 4 && res.code?.minor == 0 }
+const hasPayloadError = (res) => {return res.code.major >= 4 && res.code.minor == 0 }
 
-function sendToFog(data) {
+const sendToFog = (data) => {
   
   var req = coap.request(cloudToFog);
   req.setOption('Block1', Buffer.alloc(0x6))
 
-  const builPayload = buildPayload(JSON.stringify(data))
-  req.write(builPayload);
+  const payload = buildPayload(JSON.stringify(data))
+  console.log("Send to Fog -->",payload);
+
+  req.write(payload);
 
   req.on("response", function (res) {
     res.on("data", function (data) {
