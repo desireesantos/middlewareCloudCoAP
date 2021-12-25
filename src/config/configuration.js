@@ -1,7 +1,7 @@
 var build_COAP_Topics = ["middlewareToCloud", "middlewareToFog"];
 
 var requestOptions = {
-  host: "54.94.174.102",
+  host: "localhost",
   port: 5683,
   method: "put",
   observe: false,
@@ -12,6 +12,7 @@ var fogToCloud = {
   port: 5683,
   pathname: "middlewareToCloud",
   method: "get",
+  protocol: 'coap',
   observe: true,
   options: {
     Accept: 'application/json'
