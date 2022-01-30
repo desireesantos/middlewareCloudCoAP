@@ -10,8 +10,8 @@ exports.consumeDataFromTopic = function () {
     URL_RESOURCE,  
     method,
     (response) => {
-      console.log("PAYLOAD FROM FOG:", Buffer.from(response.payload).toString('utf-8'))
-      hasPayloadError(response) ? getValue() : sendToFog(Buffer.from(response.payload).toString('utf-8'))
+      console.log("PAYLOAD FROM FOG:", Buffer.from(response.payload).toString('utf8'))
+      hasPayloadError(response) ? getValue() : sendToFog(Buffer.from(response.payload).toString('utf8'))
     })
   .then(() => { console.log("SUCCESS")})
   .catch(err => { console.error("ConsumeDataFromTopic - Observe Error", err)});
@@ -44,8 +44,8 @@ function buildPayload(data) {
   const json = sanitezeTextIntoObject(data)
 
   const payload = {
-    'message': json.message ? Buffer.from(json.message).toString(): Buffer.from(data).toString(),
-    'date': json.date ? json.date.concat(`, ${new Date().toISOString()}`) : new Date().toISOString()
+    'message': json.message ? Buffer.from(json.message).toString(): Buffer.from(data).toString('utf-8'),
+    'date': json.date ? json.date.concat(`, ${new Date().toISOString()}`) : new Date().toISOString('utf-8')
   }
   return JSON.stringify(payload);
 }
@@ -58,6 +58,15 @@ async function getValue() {
 
 const sanitezeTextIntoObject = (textToSinetize) => {
   const convertToObject = JSON.parse(JSON.stringify(textToSinetize));
-  const textFormated = convertToObject.replace('""}', '"}');
+  console.log("-====", convertToObject)
+  const textFormated = convertToObject.replace(/\\n/g, "\\n")
+  .replace(/\\'/g, "\\'")
+  .replace(/\\"/g, '\\"')
+  .replace(/\\&/g, "\\&")
+  .replace(/\\r/g, "\\r")
+  .replace(/\\t/g, "\\t")
+  .replace(/\\b/g, "\\b")
+  .replace(/\\f/g, "\\f")
+  .replace(/[\u0000-\u001F]+/g,"");
   return JSON.parse(textFormated);
 }

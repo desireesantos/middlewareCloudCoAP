@@ -20,7 +20,7 @@ var fogToCloud = {
 };
 
 var cloudToFog = Object.assign(requestOptions, {
-  hostname: "localhost",
+  hostname:"54.94.174.102",
   port: 5683,
   pathname: "middlewareToFog",
   method: "put",
